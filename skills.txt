@@ -1,0 +1,27 @@
+python
+java
+sql
+aws
+azure
+docker
+kubernetes
+machine learning
+data science
+javascript
+react
+angular
+node.js
+devops
+agile
+scrum
+git
+rest api
+microservices
+cloud computing
+natural language processing
+nlp
+tensorflow
+pytorch
+communication
+teamwork
+problem-solving
