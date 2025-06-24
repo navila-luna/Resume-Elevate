@@ -9,12 +9,17 @@ The following are the functionalities:
 3. User clicks an "Analyze" button.
 4. The app displays a numerical match score and a list of suggested keywords.
 
+Figma wireframe for desired final product for prototype version 1 is included below:
+<img width="423" alt="Screen Shot 2025-06-24 at 11 52 59 AM" src="https://github.com/user-attachments/assets/4ef45c40-3b71-4f1c-a041-b0a0207b5935" />
 
-python3 -m venv .venv
-source .venv/bin/activate
 
-pip install keybert
-pip install sentence-transformers
-pip install google-generativeai
+
+
+Installation Steps:
+1. python3 -m venv .venv
+2. source .venv/bin/activate
+3. pip install keybert
+4. pip install sentence-transformers
+5. pip install google-generativeai
 
 
