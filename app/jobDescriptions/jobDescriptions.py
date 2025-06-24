@@ -19,7 +19,7 @@ class JobDescriptionParser:
         self.matcher.add("EXPERIENCE", [pattern_experience])
         
 
-    #Helper to load keywords from a text file, one per line."""
+    # Helper to load keywords from a text file, one per line."""
     def _load_keywords(self, filepath):
         try:
             with open(filepath, 'r') as f:
@@ -29,9 +29,8 @@ class JobDescriptionParser:
             return []
 
 
-    """
-        Parses a single job description to extract skills, experience levels, and qualifications.
-    """
+    
+    # Parses a single job description to extract skills, experience levels, and qualifications.
     def parse_job_description(self, job_description_text):
         doc = self.nlp(job_description_text.lower())
 
@@ -61,7 +60,7 @@ class JobDescriptionParser:
         for skill in self.skill_keywords:
             if skill in doc.text:
                 # Basic attempt to distinguish required vs. preferred
-                # This needs significant improvement for accuracy
+                # TODO: This needs significant improvement for accuracy
                 if "required" in doc.text or "must have" in doc.text or "mandatory" in doc.text:
                     if skill in doc.text.split("required")[0] or skill in doc.text.split("must have")[0]: # Simplified
                         required_skills.add(skill)
@@ -83,7 +82,6 @@ class JobDescriptionParser:
     """
     def _extract_experience(self, doc):
         experience_text = []
-
         # check first numerical years of experience
         matches = self.matcher(doc)
         for match_id, start, end in matches:
@@ -103,10 +101,10 @@ class JobDescriptionParser:
             for keyword in keywords:
                 if keyword in doc.text:
                     found_levels.append(level)
-                    break # Only need to find one keyword per level
+                    break
 
         if experience_text:
-            return ", ".join(experience_text + list(set(found_levels))) # Combine numerical and keyword levels
+            return ", ".join(experience_text + list(set(found_levels)))
         elif found_levels:
             return ", ".join(list(set(found_levels)))
         else:
@@ -139,7 +137,7 @@ class JobDescriptionParser:
 
         parsed_data = []
         for index, row in df.iterrows():
-            job_description = str(row['job_description']) # Ensure it's a string
+            job_description = str(row['job_description'])
             job_role = str(row['job_role'])
             parsed_info = self.parse_job_description(job_description)
             parsed_data.append({

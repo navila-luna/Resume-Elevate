@@ -11,7 +11,7 @@ try:
     SENTENCE_MODEL = SentenceTransformer('all-MiniLM-L6-v2')
     print("[INFO] Open-source ML models loaded successfully.")
 except Exception as e:
-    print(f"Warning: Could not load open-source ML models. {e}")
+    print(f"[WARN]: Could not load open-source ML models. {e}")
     KEYBERT_MODEL = None
     SENTENCE_MODEL = None
 
@@ -27,7 +27,7 @@ try:
         GEMINI_MODEL = genai.GenerativeModel('gemini-1.5-flash-latest')
         print("[INFO] Gemini API configured successfully.")
 except Exception as e:
-    print(f"Warning: Could not configure Gemini API. {e}")
+    print(f"[WARN]: Could not configure Gemini API. {e}")
     GEMINI_MODEL = None
 
 # Extracts text content from a given PDF file.
@@ -122,7 +122,7 @@ def check_codepath_student_resume_format(resume_text: str) -> list[str]:
 
     return feedback if feedback else ["Your resume format aligns well with CodePath student guidelines! Great job!"]
 
-"""Helper to check for essential contact information."""
+#  Helper to check for essential contact information.
 def _check_contact_info(resume_text: str, feedback: list[str]):
     contact_checks = {
         "Email Address": r'[\w\.-]+@[\w\.-]+',
@@ -134,17 +134,17 @@ def _check_contact_info(resume_text: str, feedback: list[str]):
         if not re.search(pattern, resume_text, re.IGNORECASE):
             feedback.append(f"Contact Info: Consider adding your {item}.")
 
+# Helper to check for the presence of standard resume sections.
 def _check_required_sections(resume_text: str, feedback: list[str]):
-    """Helper to check for the presence of standard resume sections."""
     required_sections = ['education', 'experience', 'projects', 'skills']
     for section in required_sections:
         if not re.search(r'\b' + section + r'\b', resume_text, re.IGNORECASE):
             feedback.append(f"Structure: Missing a standard '{section.capitalize()}' section, which is required.")
 
 
-"""Helper to check for specific details within the education section."""
+# Helper to check for specific details within the education section.
 def _check_education_details(resume_text: str, feedback: list[str]):
-    # Check for GPA below 3.5
+    # Check for when GPA is below 3.5
     gpa_pattern = r'\b(gpa)\b.*([12]\.\d|3\.[0-4])'
     if re.search(gpa_pattern, resume_text, re.IGNORECASE):
         feedback.append("Education: Your GPA is below 3.5. It's recommended to remove it.")
@@ -155,7 +155,7 @@ def _check_education_details(resume_text: str, feedback: list[str]):
         feedback.append("Education: Ensure you list your full degree name (e.g., Bachelor of Science in Computer Science).")
         
     dates_pattern = r'\b(january|february|march|april|may|june|july|august|september|october|november|december|expected|grad)\b.*\d{4}'
-    # Check for planned graduation month and year
+    # Checks for planned graduation month and year
     if not re.search(dates_pattern, resume_text, re.IGNORECASE):
         feedback.append("Education: Include your planned graduation month and year (e.g., May 2025).")
 
@@ -166,6 +166,7 @@ def _check_codepath_mention(resume_text: str, feedback: list[str]):
 
 # check bullet points for action verbs and quantitative details.
 def _check_bullet_point_quality(resume_text: str, feedback: list[str]):
+    # TODO: attach data/technicalVerbAnalysis/actionWords.py csv action_verbs file once done refining
     action_verbs = [
         'developed', 'engineered', 'created', 'led', 'managed', 'implemented', 
         'designed', 'architected', 'built', 'optimized', 'improved', 'increased', 
@@ -185,8 +186,9 @@ def _check_bullet_point_quality(resume_text: str, feedback: list[str]):
         # Updated regex to capture numbers and common quantifiers like "thousand", "million"
         quantifiable_terms = re.findall(r'\d+(\.\d+)?%?|\b(thousand|million|billion)\b', resume_text, re.IGNORECASE)
         number_density = len(quantifiable_terms) / total_words if total_words > 0 else 0
-
-        if number_density < 0.005: # Threshold for low quantitative detail (can be adjusted)
+        
+        # Threshold for low quantitative detail (can be adjusted)
+        if number_density < 0.005:
              feedback.append("Experience/Projects: Add more quantitative details (numbers, percentages, etc.) to show impact.")
              
 # --- Main Analysis Logic ---
@@ -197,10 +199,10 @@ def generate_improvement_suggestions(resume_text, jd_text, matched_keywords, mis
     print("\n[INFO] Generating AI suggestions with Gemini API...")
     
     prompt = f"""
-    You are an expert career coach specializing in helping CodePath students optimize their resumes for tech job applications. 
+    You are an expert career coach specializing in helping CodePath computer science students optimize their resumes for tech job applications. 
     Your goal is to provide highly actionable, empathetic, and constructive feedback based on the provided resume and job description.
     
-    Here's the data for your analysis:
+    Below is the data for your analysis:
     - **Resume Text:**
     {resume_text}
     - **Job Description Text:**
@@ -322,7 +324,7 @@ def run_full_analysis(resume_pdf_path: str, job_description_text: str) -> dict:
         "suggestions": suggestions
     }
 
-# --- Example Usage ---
+# --- NOTE: Below is example usage for self testing purposes ---
 if __name__ == '__main__':
     if not os.path.exists('data'): os.makedirs('data')
     try:
@@ -366,6 +368,6 @@ if __name__ == '__main__':
         print("\n--- **CodePath Format Checklist** ---")
         for feedback in results['codepath_format_feedback']: print(f"• {feedback}")
         print("\n--- **Content & Keyword Analysis** ---")
-        print(f"✅ Matched Keywords: {results['matched_keywords']}")
-        print(f"❌ Missing Keywords: {results['missing_keywords']}")
+        print(f"Matched Keywords: {results['matched_keywords']}")
+        print(f"Missing Keywords: {results['missing_keywords']}")
         print(f"\nSuggestions:\n{results['suggestions']}")
